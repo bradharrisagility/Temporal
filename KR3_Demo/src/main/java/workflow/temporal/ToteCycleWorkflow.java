@@ -1,11 +1,10 @@
-package workflow;
+package workflow.temporal;
 
 import io.temporal.workflow.WorkflowInterface;
 import io.temporal.workflow.WorkflowMethod;
 
 @WorkflowInterface
-public interface KR3Workflow {
-
+public interface ToteCycleWorkflow {
     @WorkflowMethod
-    void replaceTote(Integer toteNum, Double toteMass);
+    void ToteCycle(Integer toteNum, Double toteMass);
 }

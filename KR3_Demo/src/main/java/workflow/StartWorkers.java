@@ -4,19 +4,25 @@ import io.temporal.client.WorkflowClient;
 import io.temporal.serviceclient.WorkflowServiceStubs;
 import io.temporal.worker.Worker;
 import io.temporal.worker.WorkerFactory;
+import workflow.temporal.ActivitiesImpl;
+import workflow.temporal.ToteCycleWorkflow;
+import workflow.temporal.ToteCycleWorkflowImpl;
 
 public class StartWorkers {
 
     public static void main(String[] args) {
-        WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
-        WorkflowClient client = WorkflowClient.newInstance(service);
+        try {
+            WorkflowServiceStubs service = WorkflowServiceStubs.newLocalServiceStubs();
+            WorkflowClient client = WorkflowClient.newInstance(service);
+            WorkerFactory factory = WorkerFactory.newInstance(client);
+            Worker worker = factory.newWorker("tote-cycle-queue");
 
-        WorkerFactory factory = WorkerFactory.newInstance(client);
-        Worker worker = factory.newWorker("replace-tote-task-queue");
+            worker.registerWorkflowImplementationTypes(ToteCycleWorkflowImpl.class);
+            worker.registerActivitiesImplementations(new ActivitiesImpl());
 
-        worker.registerWorkflowImplementationTypes(KR3WorkflowImpl.class);
-        worker.registerActivitiesImplementations(new RobotActivityImpl());
-
-        factory.start();
+            factory.start();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 }
